@@ -22,8 +22,9 @@ public class GeneratePolicyHandlerTests
         Mock<IPolicyRepository> policies = new Mock<IPolicyRepository>();
         Mock<IUserRepository> users = new Mock<IUserRepository>();
         Mock<IDocumentRepository> docs = new Mock<IDocumentRepository>();
+        Mock<IUserStateService> state = new Mock<IUserStateService>();
         users.Setup(u => u.GetAsync(123)).ReturnsAsync(new User { Id = 123 });
-        GeneratePolicyHandler handler = new GeneratePolicyHandler(pdfService.Object, storage.Object, bot.Object, openai.Object, policies.Object, users.Object, docs.Object);
+        GeneratePolicyHandler handler = new GeneratePolicyHandler(pdfService.Object, storage.Object, bot.Object, openai.Object, policies.Object, users.Object, docs.Object, state.Object);
         await handler.Handle(new GeneratePolicyCommand(123, Guid.NewGuid()), default);
         bot.Verify(b => b.SendDocumentAsync(123, It.IsAny<Stream>(), "policy.pdf"), Times.Once);
         policies.Verify(p => p.SavePolicyAsync(It.IsAny<Policy>()), Times.Once);

@@ -8,5 +8,6 @@ public enum UserState
     [Description("AwaitingDocumentUpload")] AwaitingDocumentUpload,
     [Description("AwaitingPriceConfirmation")] AwaitingPriceConfirmation,
     [Description("PolicyApprovalPending")] PolicyApprovalPending,
-    [Description("PolicyGeneratingPending")] PolicyGeneratingPending
+    [Description("PolicyGeneratingPending")] PolicyGeneratingPending,
+    [Description("Start")] Start,
 }

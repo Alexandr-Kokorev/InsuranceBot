@@ -22,14 +22,8 @@ public class ConfirmExtractedDataHandler(ITelegramBotService bot, IUserStateServ
         }
         else if (request.Confirmed)
         {
-            await bot.SendReplyMarkupAsync(request.TelegramUserId,
-                "Data confirmed! Insurance price is $100. Reply YES to proceed or NO to cancel.",
-                new InlineKeyboardMarkup([
-                    [
-                        InlineKeyboardButton.WithCallbackData("Yes",   "yes"),
-                        InlineKeyboardButton.WithCallbackData("No", "no")
-                    ]
-                ]));
+            await bot.SendTextAsync(request.TelegramUserId,
+                "Data confirmed! Insurance price is $100. Reply YES to proceed or NO to cancel.");
             
             await state.SetNextStateAsync(request.TelegramUserId,
                 Enum.GetName(UserState.AwaitingPriceConfirmation));

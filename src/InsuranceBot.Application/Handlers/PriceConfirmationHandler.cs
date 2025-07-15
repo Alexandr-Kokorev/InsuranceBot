@@ -16,13 +16,8 @@ public class PriceConfirmationHandler(ITelegramBotService bot, IUserStateService
     {
         if (request.Confirmed)
         {
-            await bot.SendReplyMarkupAsync(request.TelegramUserId, "Your policy is ready to be issued.",
-                new InlineKeyboardMarkup([
-                    [
-                        InlineKeyboardButton.WithCallbackData("Generate Policy", "generate_policy")
-                    ]
-                ])
-            );
+            await bot.SendTextAsync(request.TelegramUserId, "Your policy is ready to be issued.");
+            await bot.SendTextAsync(request.TelegramUserId, "/generate_policy");
             await state.SetNextStateAsync(request.TelegramUserId, Enum.GetName(UserState.PolicyGeneratingPending));
         }
         else

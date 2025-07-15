@@ -12,7 +12,7 @@ namespace InsuranceBot.Telegram.Workflows;
 
 public class MessageWorkflow : IWorkflow
 {
-    public static List<UploadedUserDocuments> uploadedDocumentsList { get; set; }
+    public static List<UploadedUserDocuments> uploadedDocumentsList;
     private static Guid sessionUuid;
 
     private static readonly Dictionary<string, Func<long, IMediator, string, Update, CancellationToken, Task>>
@@ -27,7 +27,9 @@ public class MessageWorkflow : IWorkflow
                 ["/resendpolicy"] = async (userId, mediator, text, update, ct) =>
                     await mediator.Send(new ResendPolicyCommand(userId), ct),
                 ["/admin summary"] = async (userId, mediator, text, update, ct) =>
-                    await mediator.Send(new AdminSummaryCommand(userId), ct)
+                    await mediator.Send(new AdminSummaryCommand(userId), ct),
+                ["/generate_policy"] = async (userId, mediator, text, update, ct) =>
+                    await mediator.Send(new GeneratePolicyCommand(userId, sessionUuid), ct)
             };
 
     private static readonly Dictionary<string, Func<long, IMediator, string, Update, CancellationToken, Task>>
@@ -40,9 +42,13 @@ public class MessageWorkflow : IWorkflow
                     if (text is "yes" or "y")
                     {
                         uploadedDocumentsList.MarkAsConfirmed();
+                        bool partlyConfirmed = uploadedDocumentsList.Count == 1
+                            ? uploadedDocumentsList.All(x => x.IsConfirmed)
+                            : uploadedDocumentsList.Any(x => !x.IsConfirmed);
+                        
                         await mediator.Send(
                             new ConfirmExtractedDataCommand(userId,
-                                uploadedDocumentsList.Any(x => !x.IsConfirmed),
+                                partlyConfirmed,
                                 uploadedDocumentsList.All(x => x.IsConfirmed)),
                             ct);
                     }
@@ -57,13 +63,6 @@ public class MessageWorkflow : IWorkflow
                     }
                     else if (text is "no" or "n")
                         await mediator.Send(new PriceConfirmationCommand(userId, false), ct);
-                },
-                [Enum.GetName(UserState.PolicyGeneratingPending)!] = async (userId, mediator, text, update, ct) =>
-                {
-                    if (text is "yes" or "y")
-                    {
-                        await mediator.Send(new GeneratePolicyCommand(userId, sessionUuid), ct);
-                    }
                 }
             };
 
@@ -81,7 +80,12 @@ public class MessageWorkflow : IWorkflow
             if (CommandHandlers.TryGetValue(text,
                     out Func<long, IMediator, string, Update, CancellationToken, Task>? cmdHandler))
             {
-                sessionUuid = Guid.NewGuid();
+                if (userState == "Start")
+                {
+                    sessionUuid = Guid.NewGuid();
+                    uploadedDocumentsList = new List<UploadedUserDocuments>();
+                }
+                
                 await cmdHandler(userId, mediator, text, update, cancellationToken);
                 return;
             }

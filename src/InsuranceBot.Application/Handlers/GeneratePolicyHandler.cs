@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using InsuranceBot.Application.Commands;
 using InsuranceBot.Domain.Entities;
+using InsuranceBot.Domain.Enums;
 using InsuranceBot.Domain.Interfaces.Repositories;
 using InsuranceBot.Domain.Interfaces.Services;
 using MediatR;
@@ -18,7 +19,8 @@ public class GeneratePolicyHandler(
     IOpenAiService openAi,
     IPolicyRepository policies,
     IUserRepository users,
-    IDocumentRepository docs)
+    IDocumentRepository docs,
+    IUserStateService state)
     : IRequestHandler<GeneratePolicyCommand>
 {
     public async Task Handle(GeneratePolicyCommand request, CancellationToken ct)
@@ -39,5 +41,8 @@ public class GeneratePolicyHandler(
         
         await bot.SendDocumentAsync(request.TelegramUserId, File.OpenRead(filePath), "policy.pdf");
         await bot.SendTextAsync(request.TelegramUserId, $"Policy issued. Expires: {expiry:yyyy-MM-dd}");
+        
+        await state.SetNextStateAsync(request.TelegramUserId,
+            Enum.GetName(UserState.Start));
     }
 }
