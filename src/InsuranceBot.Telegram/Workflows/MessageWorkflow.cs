@@ -22,6 +22,8 @@ public class MessageWorkflow : IWorkflow
             {
                 ["/start"] = async (userId, mediator, text, update, ct) =>
                     await mediator.Send(new StartCommand(userId), ct),
+                ["/start(admin)"] = async (userId, mediator, text, update, ct) =>
+                    await mediator.Send(new StartCommand(userId, true), ct),
                 ["/cancel"] = async (userId, mediator, text, update, ct) =>
                     await mediator.Send(new CancelCommand(userId), ct),
                 ["/resendpolicy"] = async (userId, mediator, text, update, ct) =>
@@ -75,7 +77,7 @@ public class MessageWorkflow : IWorkflow
             string text = (update.Message.Text ?? String.Empty).Trim().ToLower();
             Document? doc = update.Message.Document;
 
-            string userState = await state.GetUserStateAsync(userId) ?? "Start";
+            string userState = await state.GetUserStateAsync(userId, update.Message.Text == "/start(admin)") ?? "Start";
 
             if (CommandHandlers.TryGetValue(text,
                     out Func<long, IMediator, string, Update, CancellationToken, Task>? cmdHandler))

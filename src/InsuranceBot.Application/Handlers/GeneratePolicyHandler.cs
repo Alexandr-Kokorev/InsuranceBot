@@ -30,7 +30,9 @@ public class GeneratePolicyHandler(
             await docs.GetExtractedFieldsAsync(user.TelegramUserId, request.SessionUuid);
         
         DateTime expiry = DateTime.UtcNow.AddDays(7);
-        byte[] pdfBytes = await pdf.GeneratePolicyPdfAsync(userData, expiry);
+        userData.Add("ExpiryDate", expiry.ToString("yyyy-MM-dd"));
+        
+        byte[] pdfBytes = pdf.GeneratePolicyPdfAsync(userData);
         
         string filePath = await storage.SavePolicyPdfAsync(request.TelegramUserId, pdfBytes);
         

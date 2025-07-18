@@ -12,11 +12,11 @@ public class UserRepository(AppDbContext db) : IUserRepository
     public async Task<User> GetAsync(long userId)
         => await db.Users.FirstOrDefaultAsync(u => u.TelegramUserId == userId);
 
-    public async Task EnsureUserAsync(long userId)
+    public async Task EnsureUserAsync(long userId, bool isAdmin)
     {
         if (await GetAsync(userId) == null)
         {
-            db.Users.Add(new User { TelegramUserId = userId, CreatedAt = DateTime.UtcNow, CurrentState = "Start" });
+            db.Users.Add(new User { TelegramUserId = userId, CreatedAt = DateTime.UtcNow, CurrentState = "Start", IsAdmin = isAdmin});
             await db.SaveChangesAsync();
         }
     }

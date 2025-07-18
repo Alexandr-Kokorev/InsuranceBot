@@ -29,13 +29,13 @@ public class UserStateService(AppDbContext db, IUserRepository userRepository) :
         await db.SaveChangesAsync();
     }
     
-    public async Task<string?> GetUserStateAsync(long telegramUserId)
+    public async Task<string?> GetUserStateAsync(long telegramUserId, bool isAdmin = false)
     {
         User user = await userRepository.GetAsync(telegramUserId);
         if (user != null)
             return user.CurrentState;
 
-        await userRepository.EnsureUserAsync(telegramUserId);
+        await userRepository.EnsureUserAsync(telegramUserId, isAdmin);
         user = await userRepository.GetAsync(telegramUserId);
         return user?.CurrentState;
     }

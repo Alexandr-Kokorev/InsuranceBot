@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace InsuranceBot.Domain.Interfaces.Services;
 
 public interface IPolicyPdfService
 {
-    Task<byte[]> GeneratePolicyPdfAsync(Dictionary<string, string> userData, DateTime expiry);
+    byte[] GeneratePolicyPdfAsync(Dictionary<string, string> userData);
 }

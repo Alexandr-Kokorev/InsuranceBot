@@ -23,7 +23,7 @@ public class StartCommandHandler(
             "Create short greeting to perform Car Insurance Bot to user\nSteps:\n 1. Upload Passport\n 2. Upload Vehicle Registration\n 3. Confirm Data\n 4. Confirm $100 Payment\n 5. Get PDF Policy.",
             "Welcome to the Car Insurance Bot!\nSteps:\n 1. Upload Passport\n 2. Upload Vehicle Registration\n 3. Confirm Data\n 4. Confirm $100 Payment\n 5. Get PDF Policy.");
 
-        await users.EnsureUserAsync(request.TelegramUserId);
+        await users.EnsureUserAsync(request.TelegramUserId, request.IsAdmin);
         await botService.SendTextAsync(request.TelegramUserId, greeting);
 
         await botService.SendTextAsync(

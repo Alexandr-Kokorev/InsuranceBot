@@ -2,4 +2,4 @@
 
 namespace InsuranceBot.Application.Commands;
 
-public record StartCommand(long TelegramUserId) : IRequest;
+public record StartCommand(long TelegramUserId, bool IsAdmin = false) : IRequest;

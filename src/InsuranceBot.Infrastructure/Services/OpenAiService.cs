@@ -6,14 +6,11 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using InsuranceBot.Domain.Interfaces.Services;
 using InsuranceBot.Infrastructure.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace InsuranceBot.Infrastructure.Services;
 
-public class OpenAiService(IConfiguration config, HttpClient client) : IOpenAiService
+public class OpenAiService(string apiKey, HttpClient client) : IOpenAiService
 {
-    private readonly string _apiKey = config["OPENAI_API_KEY"];
-
     public async Task<string> GetSmartReplyAsync(string prompt, string userInputFallback)
     {
         var body = new
@@ -25,7 +22,7 @@ public class OpenAiService(IConfiguration config, HttpClient client) : IOpenAiSe
             }
         };
         
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
         HttpResponseMessage response = await client.PostAsJsonAsync("https://api.openai.com/v1/chat/completions", body);
        
         if (!response.IsSuccessStatusCode)

@@ -12,11 +12,10 @@ namespace InsuranceBot.WebApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationDbContext(this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddApplicationDbContext(this IServiceCollection services)
     {
         return services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration["DEFAULT_DB_CONNECTION"]));
+            options.UseSqlServer(Environment.GetEnvironmentVariable("DEFAULT_DB_CONNECTION")));
     }
 
     public static IServiceCollection AddRepositories(this IServiceCollection services)
@@ -39,19 +38,21 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddExternalServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSingleton<ITelegramBotClient>(_ => new TelegramBotClient(configuration["TELEGRAM_BOT_TOKEN"]!));
+        services.AddSingleton<ITelegramBotClient>(_ =>
+            new TelegramBotClient(Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN")!));
         services.AddScoped<ITelegramBotService, TelegramBotService>();
 
-        services.AddSingleton<MindeeClient>(_ => new MindeeClient(configuration["MINDEE_API_KEY"]!));
+        services.AddSingleton<MindeeClient>(_ =>
+            new MindeeClient(Environment.GetEnvironmentVariable("MINDEE_API_KEY")!));
         services.AddHttpClient<IMindeeApiService, MindeeApiService>();
         services.AddScoped<IMindeeApiService, MindeeApiService>();
-        
+
         services.AddSingleton<IOpenAiService>(provider =>
         {
             HttpClient httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
-            return new OpenAiService(configuration, httpClient);
+            return new OpenAiService(Environment.GetEnvironmentVariable("OPENAI_API_KEY"), httpClient);
         });
-        
+
         return services;
     }
 

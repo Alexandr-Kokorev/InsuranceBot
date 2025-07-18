@@ -6,5 +6,5 @@ public interface IUserStateService
 {
     Task SetNextStateAsync(long userId, string state);
     Task ResetStateAsync(long userId);
-    Task<string?> GetUserStateAsync(long telegramUserId);
+    Task<string?> GetUserStateAsync(long telegramUserId, bool isAdmin = false);
 }

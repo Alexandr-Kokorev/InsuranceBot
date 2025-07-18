@@ -13,7 +13,7 @@ public class GeneratePolicyHandlerTests
     public async Task Handle_GeneratesPdfAndSendsToUser()
     {
         Mock<IPolicyPdfService> pdfService = new Mock<IPolicyPdfService>();
-        pdfService.Setup(p => p.GeneratePolicyPdfAsync(It.IsAny<Dictionary<string, string>>(), It.IsAny<DateTime>())).ReturnsAsync(new byte[] { 1, 2, 3 });
+        pdfService.Setup(p => p.GeneratePolicyPdfAsync(It.IsAny<Dictionary<string, string>>())).Returns([1, 2, 3]);
         Mock<IFileStorageService> storage = new Mock<IFileStorageService>();
         storage.Setup(s => s.SavePolicyPdfAsync(123, It.IsAny<byte[]>())).ReturnsAsync("/tmp/policy.pdf");
         Mock<ITelegramBotService> bot = new Mock<ITelegramBotService>();
