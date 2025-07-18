@@ -55,12 +55,17 @@ public class MessageWorkflow : IWorkflow
                             ct);
                     }
                     else if (text is "no" or "n")
+                    {
+                        uploadedDocumentsList.Remove(uploadedDocumentsList.Last());
                         await mediator.Send(new ConfirmExtractedDataCommand(userId, false, false), ct);
+                    }
+                        
                 },
                 [Enum.GetName(UserState.AwaitingPriceConfirmation)!] = async (userId, mediator, text, update, ct) =>
                 {
                     if (text is "yes" or "y")
                     {
+                        uploadedDocumentsList.CleanUploadedDocumentsList();
                         await mediator.Send(new PriceConfirmationCommand(userId, true), ct);
                     }
                     else if (text is "no" or "n")

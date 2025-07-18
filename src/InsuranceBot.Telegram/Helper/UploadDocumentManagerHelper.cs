@@ -3,6 +3,7 @@ using InsuranceBot.Telegram.Models;
 
 namespace InsuranceBot.Telegram.Helper;
 
+// Document counter
 public static class UploadDocumentManagerHelper
 {
     public static void UpdateUserDocsUploadList(this List<UploadedUserDocuments> uploadedDocuments, Guid sessionUuid)
