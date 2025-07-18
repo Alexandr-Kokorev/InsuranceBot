@@ -20,6 +20,6 @@ public class StartCommandHandlerTests
         await handler.Handle(new StartCommand(123), default);
         bot.Verify(b => b.SendTextAsync(123, It.Is<string>(msg => msg.Contains("Welcome"))), Times.Once);
         log.Verify(l => l.LogAsync(123, "Start", It.IsAny<string>()), Times.Once);
-        repo.Verify(r => r.EnsureUserAsync(123), Times.Once);
+        repo.Verify(r => r.EnsureUserAsync(123, false), Times.Once);
     }
 }
