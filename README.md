@@ -27,26 +27,27 @@ A Telegram bot application for car insurance sales built with .NET 8.0.
    dotnet build
    ```
 
-4. Update `appsettings.json` or `secrets.json` with connections to APIs and database
-```
-TELEGRAM_BOT_TOKEN
-OPENAI_API_KEY
-MINDEE_API_KEY
-DEFAULT_DB_CONNECTION
-```
-
-6. Run EF Core migrations on `InsuranceBot.Infrastructure` project to set up database
-
-5. Run the Telegram bot application:
+4. Update `appsettings.json` or configure `Keys.env` with connections to APIs and database
    ```
-   dotnet run --project InsuranceBot.Telegram
+   TELEGRAM_BOT_TOKEN
+   OPENAI_API_KEY
+   MINDEE_API_KEY
+   DEFAULT_DB_CONNECTION
    ```
 
-5. Run the Web API (optional):
+5. Run Migrator `Database.MigrationRunner` project to set up database
+
+6. Run the Telegram bot application:
    ```
    dotnet run --project InsuranceBot.WebApi
    ```
 
+7. (optional) Run command for Docker:
+   ```
+   docker compose build
+   docker compose up
+   ```
+   
 ## Project Structure
 
 - `InsuranceBot.Application` - Application services and business logic
@@ -59,6 +60,14 @@ DEFAULT_DB_CONNECTION
 ## Configuration
 
 Before running the application, make sure to configure your Telegram Bot Token in the appropriate configuration file.
+
+## Bot commands
+- `/start` - start dialog with bot
+- `/start(admin)` - start dialog with bot and set user as admin
+- `/cancel` - reset process
+- `/resendpolicy` - request generated file
+- `/admin summary` - summary of issued policies
+- `/generate_policy` - request policy generation after inserted data confirmed
 
 ## License
 
