@@ -11,11 +11,6 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
 
 DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] { "Keys.env" }));
 
-var s = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
-var sd = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-var sf = Environment.GetEnvironmentVariable("MINDEE_API_KEY");
-var sv = Environment.GetEnvironmentVariable("DEFAULT_DB_CONNECTION");
-
 ServiceCollection serviceCollection = new ServiceCollection();
 
 serviceCollection.AddSingleton(configuration);

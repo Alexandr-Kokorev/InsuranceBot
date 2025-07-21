@@ -1,0 +1,44 @@
+﻿version: '3.9'
+
+services:
+  database.migrationrunner:
+    image: database.migrationrunner
+    environment:
+      - DEFAULT_DB_CONNECTION=${DEFAULT_DB_CONNECTION}
+    build:
+      context: .
+      dockerfile: Database/Database.MigrationRunner/Dockerfile
+      
+  insurancebot-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: insurancebot-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA}
+    restart: no
+    ports:
+      - 14330:1433
+    volumes:
+      - ./data/mssql/data:/var/opt/mssql/data
+        
+  insurancebot.web:
+    build:
+      context: .
+      dockerfile: InsuranceBot.WebApi/Dockerfile
+    container_name: insurancebot-web
+    depends_on:
+      - insurancebot-db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MINDEE_API_KEY=${MINDEE_API_KEY}
+      - DEFAULT_DB_CONNECTION=${DEFAULT_DB_CONNECTION}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./templates:/app/templates
+        
+networks:
+  default:
+    name: insurancebot
