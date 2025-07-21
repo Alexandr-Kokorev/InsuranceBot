@@ -28,7 +28,7 @@ public class OpenAiService(string apiKey, HttpClient client) : IOpenAiService
         if (!response.IsSuccessStatusCode)
         {
             string error = await response.Content.ReadAsStringAsync();
-            //throw new Exception($"Error while accessing OpenAI API: {error}");
+            return "Open AI is not available at the moment. Please try again later.";
         }
         
         OpenAiResponse result = await response.Content.ReadFromJsonAsync<OpenAiResponse>();

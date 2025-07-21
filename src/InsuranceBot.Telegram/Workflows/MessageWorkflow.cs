@@ -84,6 +84,14 @@ public class MessageWorkflow : IWorkflow
 
             string userState = await state.GetUserStateAsync(userId, update.Message.Text == "/start(admin)") ?? "Start";
 
+            if (!text.StartsWith("/") && text != "yes" && text != "y" && text != "no" && text != "n")
+            {
+                // Use OpenAI or similar for smart response
+                await mediator.Send(new GenerateAiResponseCommand(userId, update.Message.Text),
+                    cancellationToken);
+                return;
+            }
+
             if (CommandHandlers.TryGetValue(text,
                     out Func<long, IMediator, string, Update, CancellationToken, Task>? cmdHandler))
             {
